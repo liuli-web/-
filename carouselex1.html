@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .carousel{
+            width: 60rem;
+            height: 30rem;
+            position: relative;
+        }
+        .list_imgs{
+            width: 60rem;
+            height: 30rem;
+            font-size: 3rem;
+            color: #fff;
+        }
+        .item{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+            transition: all .5s linear;
+        }
+        .item:nth-child(1){
+            background-color: #000;
+        }
+        .item:nth-child(2){
+            background-color: blue;
+        }
+        .item:nth-child(3){
+            background-color: #666;
+        }
+        .prev,.next{
+            width: 6rem;
+            height: 4rem;
+            font-size: 3rem;
+            z-index: 20;
+        }
+        .prev{
+            position: absolute;
+            top: 50%;
+            left: 0;
+            margin-top:-2rem;
+        }
+        .next{
+            position: absolute;
+            top: 50%;
+            right: 0;
+            margin-top:-2rem;
+        }
+        .point_list{
+            width: 10rem;
+            height: 2rem;
+            position: absolute;
+            left: 50%;
+            bottom:2%;
+            margin-left:-5rem;
+            z-index: 20;
+        }
+        .point_list>li{
+            width: 2rem;
+            height: 2rem;
+            margin-right: 1rem;
+            float: left;
+            border:2px solid green;
+            background-color: #fff; 
+            border-radius:100%; 
+            cursor: pointer;
+        }
+        .item.active{
+            z-index: 10;
+            opacity: 1;
+        }
+        .point.active{
+            background: #36d !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <ul class="list_imgs">
+            <li class="item active">0</li>
+            <li class="item">1</li>
+            <li class="item">2</li>
+        </ul>
+        <button class="prev"><</button>
+        <button class="next">></button>
+        <ul class="point_list">
+            <li class="point active" data-index="0"></li>
+            <li class="point" data-index="1"></li>
+            <li class="point" data-index="2"></li>
+        </ul>
+    </div>
+    <script>
+        "use strict";
+        // 第一步：先获取对象
+        let prev=document.getElementsByClassName("prev")[0];//左按钮
+        let next=document.getElementsByClassName("next")[0];//右按钮
+        let items=document.getElementsByClassName("item");//图片
+        let points=document.getElementsByClassName("point");//点
+        let carousel=document.getElementsByClassName("carousel")[0];//容器
+        // 第二步：定义一个变量来表示当前图片是第几张
+        // 在显示,并将active这个类名绑定在该图片上
+        let index=0;
+        // 第三步：定义函数一个控制active类名该赋予哪个
+        // 图片，另一个用来清除active类名
+        let clear_active = function(){
+            // 清除
+            for (let i=0;i < items.length; i++) {
+                items[i].className="item";
+            }
+            for (let i=0;i < points.length; i++) {
+                points[i].className="point";
+            }
+        }
+        let index_item = function () {
+            // 赋予
+            clear_active();
+            items[index].className="item active";
+            points[index].className="point active";
+        }
+        // 第四步：创建函数控制图片的切换
+        let change_next = function(){
+            // 向右切换
+            if(index < 2){
+                index++;
+            }else{
+                index=0;
+            }
+            index_item();
+        }
+        let change_prev = function(){
+            // 向左切换
+            if(index < 1){
+                index=2;
+            }else{
+                index--;
+            }
+            index_item();
+        }
+        // 第五步：为左右控件绑定点击事件
+        prev.addEventListener("click",function () {
+            change_prev();
+        });
+        next.addEventListener("click",function () {
+            change_next();
+        });
+        // 第六步：点与图片联动
+        for(let i=0;i<points.length;i++){
+            points[i].addEventListener("click",function () {
+            let point_index = this.getAttribute("data-index");
+            index=point_index;
+            index_item();
+        });
+        }
+        // 第七步：自动轮播
+        let timer = setInterval(() => {
+            change_next();
+        }, 2000);
+        // 第八步：鼠标进入停止自动轮播，移出恢复
+        carousel.addEventListener("mouseover",function () {
+            clearInterval(timer);
+        });
+        carousel.addEventListener("mouseout",function () {
+            timer = setInterval(() => {
+            change_next();
+        }, 2000)
+        });
+    </script>
+</body>
+</html>
